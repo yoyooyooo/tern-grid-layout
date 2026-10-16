@@ -2,6 +2,7 @@ local function fixture()
     local f = {time = 0, timers = {}, queries = {}, arrangements = 0, errors = {}, width = 2100, height = 1000, stage = 2000, focus = 3}
     local root = {split = "right", ratio = 0.7, {pane = 1}, {split = "right", ratio = 0.4, {pane = 2}, {pane = 3}}}
     f.layout = {root = root}
+    f.tabs = {{id = 10, session = 1, position = 1}, {id = 20, session = 1, position = 2}}
     local api = {
         runtime = {os = "macos"}, plugin = {data = "/plugin-data/grid-layout"},
         getenv = function(name) return name == "HOME" and "/sandbox" or nil end,
@@ -22,10 +23,29 @@ local function fixture()
             focused = function() return f.focus end,
             tab_of = function() return 10 end,
             layout = function() return f.layout end,
-            tabs = function() return {{id = 10, session = 1, position = 1}, {id = 20, session = 1, position = 2}} end,
+            tabs = function() return f.tabs end,
         },
         layout = {
-            arrange = function() f.arrangements += 1; return {} end,
+            arrange = function(_, spec)
+                local session = spec.session or 1
+                if session ~= 1 then return nil, "unknown session " .. session end
+                local resolved = {}
+                for _, group in ipairs(spec.tabs) do
+                    local found
+                    for _, tab in ipairs(f.tabs) do
+                        if tab.session == session and (group.tab == (tab.native_id or tab.id)
+                            or group.tab == tostring(tab.position)) then
+                            found = tab.id
+                            break
+                        end
+                    end
+                    if not found then return nil, "unknown tab " .. group.tab .. " in session " .. session end
+                    table.insert(resolved, found)
+                end
+                f.arranged_tabs = resolved
+                f.arrangements += 1
+                return {}
+            end,
             move = function() return true end,
             even = function() end,
         },
@@ -144,6 +164,20 @@ end)
 test("malformed response cannot arrange", function()
     local f = fixture(); f.invalid_json = true; f:manual()
     assert(f.arrangements == 0 and #f.errors == 1)
+end)
+
+test("a background tab with a truncated SDK ID does not block the focused layout", function()
+    local f = fixture()
+    -- Exact pair observed in the reported session; the target itself has an addressable ID.
+    f.tabs = {
+        {id = 11029476016218, native_id = 186951336460378, session = 1, position = 1},
+        {id = 99, session = 2, position = 1},
+        {id = 10, session = 1, position = 2},
+        {id = 20, session = 1, position = 3},
+    }
+    f:manual()
+    assert(f.arrangements == 1 and #f.errors == 0)
+    assert(f.arranged_tabs[1] == 11029476016218 and f.arranged_tabs[2] == 10 and f.arranged_tabs[3] == 20)
 end)
 
 return cases

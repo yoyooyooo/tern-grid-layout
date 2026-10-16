@@ -67,6 +67,8 @@ The plugin observes every 500 ms, with up to two short-lived CLI processes per o
 | Automatic layout appears inactive | Run the explicit command to see an error. Check config validity, CLI path and control routing. Loading or splitting alone should not arrange. |
 | Fewer columns than expected | Compare the available tab width, excluding sidebar space, with `min_width`. Run the command after editing config. |
 | Custom proportions changed | Window width or height changes intentionally restore an even layout. The plugin has no undo. |
-| Host upgrade breaks queries | This version was verified with Tern 0.8.3 only; the developer control format may change. Retain a known-good source archive. |
+| `unknown tab … in session …` | Tern's SDK ID bridge can truncate large native IDs. This source uses live string positions for all arrangement tabs, so an unrelated high-ID tab no longer blocks the focused layout. Reload an updated linked checkout, or reinstall an updated copy. |
+| Current high-ID pane does not arrange, or reports a different window | The focused pane/tab can itself fail SDK lookup or differ from the CLI's native ID. This host limitation remains; the positional tab fix does not repair pane lookup/move/equalization. Do not mask IDs or restart the daemon as a workaround. |
+| Host upgrade breaks queries | Full acceptance was recorded on Tern 0.8.3; 0.8.4 has bounded ID-selector and terminal-layout smoke only. The developer control format may change. Retain a known-good source archive. |
 
 The plugin reads config, selected Tern environment variables and geometry, then rearranges existing panes without restarting their programs. It does not make network requests, send telemetry or store pane content/logs. Error toasts can contain local paths from CLI stderr; redact them before sharing. See [SECURITY.md](../SECURITY.md) for executable/control authority and current reporting limits, and [readiness evidence](./readiness.md) for what was exercised.

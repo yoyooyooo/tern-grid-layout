@@ -9,7 +9,7 @@ Keep a busy Tern tab readable: arrange its panes into equal-width columns when t
 **Cmd+K → Grid → Grid Layout: Arrange Responsive Panes**  
 Shortcut: **Control + Option + Shift + G**.
 
-Experimental **0.5.0**, verified on **macOS / Tern 0.8.3**. Distributed as local source; no hosted repository or release is configured yet.
+Experimental **0.5.0**, verified on **macOS / Tern 0.8.3**. Source is hosted at [yoyooyooo/tern-grid-layout](https://github.com/yoyooyooo/tern-grid-layout); no tagged release is published yet.
 
 ## How it works
 
@@ -72,6 +72,8 @@ Remove a copied installation with `tern plugin remove grid-layout`. For a linked
 ## Limits and trust
 
 This plugin uses Tern's developer control interface, which can change across host versions. Geometry queries can start up to two short-lived CLI processes per observation, even in single-pane or zoomed tabs. Multi-window routing may require an explicit control endpoint. Errors during automatic queries are quiet; run the command to inspect failures. See [operation and troubleshooting](./docs/reference.md#operation-and-troubleshooting).
+
+Tern 0.8.3–0.8.4 has a large native-ID bridge limitation. Arrangement uses live tab positions to avoid an unrelated tab causing `unknown tab`; a focused pane/tab whose own ID cannot round-trip remains unsupported. See [troubleshooting](./docs/reference.md#operation-and-troubleshooting).
 
 The plugin reads its config, selected Tern environment variables and window/pane geometry, and runs the configured CLI. It sends no network requests or telemetry and stores no pane contents or diagnostic logs. Treat the configured executable and control endpoint as trusted local authority. Details and the current reporting limitation are in [SECURITY.md](./SECURITY.md).
 

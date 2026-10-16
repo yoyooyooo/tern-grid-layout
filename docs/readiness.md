@@ -1,6 +1,6 @@
 # Readiness evidence
 
-Mode: `convert`. Public contract: local source-distributed Tern plugin 0.5.0, verified on macOS / Tern 0.8.3 (e2b8656). This conversion includes local migration and consumer verification; remote creation, push and publication are outside its authorization. English and Chinese are maintained for external readers and current users.
+Public contract: source-distributed Tern plugin 0.5.0, verified on macOS / Tern 0.8.3 (e2b8656), with bounded 0.8.4 ID-selector smoke below. On 2026-10-16 the user authorized creating the public [GitHub repository](https://github.com/yoyooyooo/tern-grid-layout), pushing the source baseline and opening a fix PR. No merge or tagged release is authorized. English and Chinese are maintained for external readers and current users.
 
 ## Acceptance ledger
 
@@ -9,17 +9,17 @@ Item identifiers follow each bullet's order in the supplied Open-Source Readines
 | Items | Status | Evidence / action |
 | --- | --- | --- |
 | A1–A2 | pass | README titles and package name identify `tern-grid-layout`; native manifest retains the installed host ID `grid-layout`. |
-| A3 | needs_change | No hosted repository, public issue URL or public maintainer contact has been selected. Configure these with the chosen publication target. |
+| A3 | pass | Public source, ordinary issues and PRs use `yoyooyooo/tern-grid-layout`; CONTRIBUTING and SECURITY distinguish public reports from the still-unconfigured private vulnerability route. |
 | A4 | pass | MIT LICENSE and package license agree; no vendored third-party runtime code. |
 | A5 | pass | Experimental status, macOS / Tern 0.8.3 scope and CLI requirements are explicit. |
-| A6 | not_verified | Local destination was unused; remote name availability requires a selected publication target. |
+| A6 | pass | The authorized public repository `yoyooyooo/tern-grid-layout` was created on 2026-10-16. |
 | B1–B5 | pass | `npm run check` scans repository text for machine-home and credential patterns; explicit archive allowlist excludes config, logs, dependencies and Git metadata. Source review found no private URLs/session data. Manual CLI error toasts may contain paths; SECURITY requests redaction. This is a bounded scan, not a comprehensive secret audit. |
 | B6 | pass | README/SECURITY describe config/environment reads, geometry queries, subprocesses and no plugin network/telemetry/log storage. |
 | C1–C2 | pass | English/Chinese READMEs mutually link; CONTRIBUTING requires synchronized public facts. |
 | C3 | not_verified | Both language READMEs were observed in a local Bun Markdown preview at desktop and 390px narrow widths. First-screen purpose, command, language links and section navigation render without page overflow. Actual hosted-platform rendering remains unverified; no centered heading or badges were requested. |
 | C4–C7 | pass | Documented copy install ran from a clean extracted archive; actual shortcut and palette command exercised. Config, limits and links to deeper documents agree with source. |
-| C8 | not_verified | All 42 local Markdown links and anchors resolve. Browser clicks exercised English/Chinese language switching, section jumps, the reference route and return to README in local preview. Hosted-platform navigation remains unverified without a remote. |
-| C9–C10 | pass | Both READMEs document the same version, commands, settings, limits and local distribution status. |
+| C8 | not_verified | All 44 local Markdown links and anchors resolve. Browser clicks exercised language switching, section jumps and reference navigation in local preview. Actual hosted-platform navigation remains unverified. |
+| C9–C10 | pass | Both READMEs document the same version, commands, settings, limits and source distribution status. |
 | D1–D3 | pass | Native manifest loads; explicit source archive contains runtime files, both READMEs, linked documents and reproducible check tooling. No node_modules, machine config or generated logs are distributed. |
 | D4 | pass | npm lockfile pins `luau-web` 1.5.1; `npm ci --ignore-scripts` completed. |
 | D5 | pass | Host/platform support is deliberately limited to the verified combination. Node 22+ and npm are development only. |
@@ -27,8 +27,8 @@ Item identifiers follow each bullet's order in the supplied Open-Source Readines
 | D9 | pass | No plugin runtime package dependencies. Development `npm audit --json` returned zero vulnerabilities. |
 | D10 | pass | Both READMEs explain install/update/unlink/remove and data/config location. Destructive uninstall was documented from CLI help rather than exercised against the daily installation. |
 | E1 | pass | `npm run check` is the documented local gate. |
-| E2 | pass | Actual Luau source compiles and 11 behavior scenarios pass. Manifest versions/links/privacy checks pass. No transpilation/build is needed; no separate formatter or static typechecker is adopted. |
-| E3–E4 | not_verified | `.github/workflows/ci.yml` checks main/PR with Node 22, locked install, checks, packaging and checks from the extracted source. Local commands are exercised; hosted execution and branch protection await a remote. |
+| E2 | pass | Actual Luau source compiles and 12 behavior scenarios pass. Manifest versions/links/privacy checks pass. No transpilation/build is needed; no separate formatter or static typechecker is adopted. |
+| E3–E4 | not_verified | `.github/workflows/ci.yml` checks main/PR with Node 22, locked install, checks, packaging and checks from the extracted source. Local commands are exercised; current-head hosted results must be read separately and branch protection is unverified. |
 | E5–E6 | pass | Regression scenarios cover baseline/manual/width/height/sidebar/zoom/single-pane/window-mismatch/focus/config/query-response boundaries using synthetic state. Real host smoke separately proves installed behavior; no native-host equivalence is claimed for the fixture. |
 | E7 | pass | Runtime source is authored Luau; the archive is generated from an explicit allowlist with `npm run pack:plugin`. |
 | F1 | needs_change | SECURITY describes supported 0.5.x/macOS host scope and no response-time commitment, but a usable private reporting channel must be selected before public release. |
@@ -39,13 +39,13 @@ Item identifiers follow each bullet's order in the supplied Open-Source Readines
 | G3–G4 | not_applicable | Small local maintainer-reviewed project, no hosted issue workflow; no speculative issue templates, governance, code of conduct or response guarantees adopted. |
 | G5 | pass | CONTRIBUTING defines pre-1.0 version policy and synchronized manifests/docs. |
 | G6 | not_applicable | No dependency bot adopted without a maintainer workflow. |
-| H1 | pass | Original directory had no Git repository. Moved only that directory; initialized standalone local `main`. Files remain uncommitted for review. |
-| H2 | not_verified | Local `main` is initialized; remote visibility and hosted default branch are unset. |
+| H1 | pass | Standalone Git history starts with the original source baseline; the ID-selector fix is a separate branch for review. |
+| H2 | pass | The authorized repository is public and uses `main` as its base branch. |
 | H3–H5 | not_applicable | No release commit/tag/publish trigger is claimed. CONTRIBUTING defines immutable version-matching tags for any later remote release. |
 | H6–H12 | not_applicable | npm publication/OIDC/registry channels and GitHub Release automation do not apply to this local Tern source distribution. |
-| H13 | pass | No external repository creation, push or release performed. |
-| H14–H17 | not_applicable | No remote/registry/hosted release exists to read back; local checks do not claim remote success. |
-| H18 | not_applicable | Source had no Git history and this task created no public refs. |
+| H13 | pass | Public repository creation, baseline/fix pushes and PR creation are explicitly authorized by the user on 2026-10-16; merge and tagged release are outside scope. |
+| H14–H17 | not_verified | Read back remote branch and PR identities after push. No registry publication or GitHub Release is claimed. |
+| H18 | pass | The source had no prior Git history; the source baseline and focused fix form the initial public history. |
 | H19 | pass | CONTRIBUTING describes reinstalling retained known-good source and issuing a new patch version for fixes. |
 
 ## Exercised verification
@@ -61,7 +61,9 @@ Item identifiers follow each bullet's order in the supplied Open-Source Readines
 - README alignment uses a bilingual overview → installation → first layout → common configuration path, with complete field definitions, routing, installation modes and troubleshooting in `docs/reference.md` and `docs/reference.zh-CN.md`. Both references are included in the archive and in the contribution synchronization policy. The English command name, runtime and configuration defaults are unchanged.
 - Local browser smoke used Bun Markdown with a simple responsive stylesheet, not a hosted forge renderer. Observed both languages at desktop and 390px widths; clicked language links, English installation and Chinese configuration anchors, the reference link, reference translation and return link. No page-level horizontal overflow was observed in the checked narrow README views. Generated preview/scaffolding stays outside the repository.
 - Repacked the aligned documentation, inspected the tarball whitelist, then extracted into a fresh directory and ran `npm ci --ignore-scripts` and `npm run check`: 11 behavior scenarios and all 42 links/anchors passed from the distribution itself. Both language references and their link targets are present.
+- 2026-10-16 ID investigation on Tern 0.8.4 (`6b4535f`): the screenshot's SDK tab `11029476016218` matches native tab `186951336460378` after the bridge's low-44-bit mapping. A disposable window on the existing daemon reproduced `unknown tab 13778255085571 in session 418398534107137`; numeric session selection separately failed as `unknown session 13778255085569`. Passing string tab position `"1"` with the current session succeeded and preserved focus/tab metadata. Receipts are retained under `/tmp/tern-grid-debug.SyK6Rt/` (`high-tab-before.json`, `high-repro.json`, `high-after.json`). No daily session was rearranged.
+- The new regression models the observed SDK/native ID pair in an unrelated tab; it fails with the previous numeric selectors. Updated source passes 12 behavioral scenarios. In a fresh native window using an isolated config/daemon, the actual plugin command changed two side-by-side terminal panes into equal-height rows, preserving focus and the other tabs' order; the split tree and screenshot were observed. This is bounded smoke on 0.8.4, not a repeat of all 0.8.3 acceptance. The focused high-ID pane still fails `tab_of()` in the controlled high-ID window; geometry/native-ID equality, move and even remain host limitations.
 
 ## Decision
 
-Readiness: `conditional`. Local migration, documentation and consumer installation/behavior are verified. Public repository/contact selection, a usable private vulnerability reporting route, hosted rendering, name availability and hosted CI remain public-release prerequisites. No external publication is claimed.
+Readiness: `conditional`. Local migration, documentation and consumer installation/behavior are verified; the public source repository and ordinary reporting target are selected. A usable private vulnerability reporting route, hosted rendering and branch protection remain unverified. Hosted CI is evaluated per head; no tagged release or registry publication is claimed.
