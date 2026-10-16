@@ -14,7 +14,7 @@ npm run pack:plugin
 
 The check compiles the actual plugin with Luau, exercises trigger/guard behavior, checks manifest/version consistency and local documentation links, and scans distributable text for machine paths and credential patterns. It is not a complete static type checker or native host emulator. No build step is needed for the plugin.
 
-The GitHub Actions check workflow runs the same commands for main and pull requests, then checks an extracted archive. It does not run a graphical Tern window or publish releases; native acceptance remains a separate host check. Hosted execution is unverified until a remote is configured.
+The GitHub Actions check workflow runs the same commands for main and pull requests, then checks an extracted archive. It does not run a graphical Tern window or publish releases; native acceptance remains a separate host check. Check the current head's hosted result before relying on CI.
 
 For live development run `tern plugin link "$PWD"`, then `tern plugin reload` after edits. Never run an experimental plugin against important sessions without first checking an isolated window.
 
@@ -40,7 +40,7 @@ Quit the disposable window after checking. Do not include screenshots with sessi
 
 Describe the user-visible trigger and before/after behavior. Include the relevant check output and native evidence; report untested host versions explicitly. Add regression cases for changed behavior, not copies of implementation wiring. Keep both READMEs and both configuration references (`docs/reference.md` and `docs/reference.zh-CN.md`) synchronized for commands, defaults, supported hosts, security boundaries and version changes. When adding linked documentation, include it in the archive allowlist and check navigation from the extracted archive.
 
-This is a small maintainer-reviewed project. A code of conduct, issue templates, automated dependency PRs and response-time promises are not adopted. There is no hosted issue tracker yet; use the channel through which the source was supplied for ordinary contributions, and follow SECURITY.md for vulnerabilities.
+This is a small maintainer-reviewed project. A code of conduct, issue templates, automated dependency PRs and response-time promises are not adopted. Use [GitHub issues](https://github.com/yoyooyooo/tern-grid-layout/issues) for ordinary reports and pull requests for contributions; follow SECURITY.md for vulnerabilities.
 
 ## Versioning and distribution
 

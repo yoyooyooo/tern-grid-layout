@@ -29,17 +29,20 @@ local function arrange_columns(cx, tab_id, blocks, columns)
     end
     table.sort(ordered, function(a, b) return a.position < b.position end)
 
+    -- Tern 0.8.3–0.8.4 can truncate native IDs above bit 43 when resolving numeric
+    -- arrange selectors. Resolve positions in this synchronous snapshot instead.
+
     local groups = {}
     for _, tab in ipairs(ordered) do
         if tab.id == tab_id then
-            table.insert(groups, {tab = tab.id, blocks = blocks, split = "columns"})
+            table.insert(groups, {tab = tostring(tab.position), blocks = blocks, split = "columns"})
         else
-            table.insert(groups, {tab = tab.id, blocks = {}})
+            table.insert(groups, {tab = tostring(tab.position), blocks = {}})
         end
     end
 
     local result, err = cx.layout:arrange({
-        session = session_id,
+        -- The focused tab is in the current session; numeric session IDs share the host's ID bridge.
         tabs = groups,
         rest = "keep",
     })

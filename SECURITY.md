@@ -10,6 +10,6 @@ Only install source you trust. Treat plugin files, `config.json` (especially `ex
 
 ## Reporting
 
-No public repository or dedicated private vulnerability inbox is configured yet. Do not post exploit details, tokens, pane output or machine configuration in public. Request a private reporting channel from the person who supplied the source, then share the affected version, reproduction and impact privately. Availability of that channel is a release prerequisite; this local conversion does not claim a public security reporting service.
+The [public repository](https://github.com/yoyooyooo/tern-grid-layout) accepts ordinary issues, but no dedicated private vulnerability inbox is configured. Do not post exploit details, tokens, pane output or machine configuration in public. Request a private reporting channel from the maintainer without disclosing vulnerability details, then share the affected version, reproduction and impact privately. A verified private reporting route remains a release prerequisite; public source hosting does not establish that service.
 
 No third-party runtime code is bundled. The pinned `luau-web` package is used only for development verification. Review development audit findings separately from the installed plugin.

@@ -9,7 +9,7 @@
 **Cmd+K → Grid → Grid Layout: Arrange Responsive Panes**  
 快捷键：**Control + Option + Shift + G**。
 
-当前为 **0.5.0 实验性插件**，已验证 **macOS / Tern 0.8.3**。以本地源码分发，尚未配置托管仓库或发行版。
+当前为 **0.5.0 实验性插件**，已验证 **macOS / Tern 0.8.3**。源码托管于 [yoyooyooo/tern-grid-layout](https://github.com/yoyooyooo/tern-grid-layout)，尚未发布带标签的发行版。
 
 ## 布局方式
 
@@ -72,6 +72,8 @@ tern plugin install "$PWD" --force
 ## 限制与信任
 
 插件依赖 Tern 开发控制接口，宿主升级可能影响兼容性。每次观察最多启动两个短生命周期 CLI 进程，单 pane 和放大状态也会查询；多窗口可能需要显式控制端点。自动查询失败静默，主动执行命令可查看错误。详见[运行与排障](./docs/reference.zh-CN.md#运行与排障)。
+
+Tern 0.8.3–0.8.4 存在较大原生 ID 的桥接限制。排列使用实时 tab 位置，避免无关 tab 触发 `unknown tab`；当前 pane/tab 本身无法往返解析 ID 的情况仍不受支持。详见[运行与排障](./docs/reference.zh-CN.md#运行与排障)。
 
 插件读取自身配置、选定的 Tern 环境变量与窗口/pane 几何信息，并调用指定 CLI。不发起网络请求、不发送遥测、不存储 pane 内容或诊断日志。配置的程序和控制端点属于需要信任的本地执行权限。[安全说明](./SECURITY.md)包含详细边界及当前报告渠道限制。
 

@@ -6,10 +6,12 @@ Versions below describe local plugin iterations. They do not imply hosted releas
 
 - Move development into the standalone `tern-grid-layout` source repository, retaining plugin ID `grid-layout`, existing data paths and command ID.
 - Add MIT licensing, English and Chinese installation documentation, contribution and security boundaries, behavioral checks and a source archive packer.
-- Runtime behavior remains at 0.5.0.
 - Document the isolated native window's **Not Now** update preference so fresh test configs do not repeatedly offer to manage OMP.
 - Rename the command palette entry to English: `Grid Layout: Arrange Responsive Panes`. The command ID and shortcut are unchanged.
 - Align English and Chinese READMEs around installation and first use, add section navigation, and move complete configuration, layout rules and troubleshooting into bilingual references included in the source archive.
+- Fix session-wide arrangement failing with `unknown tab` when an unrelated tab's native ID is truncated by Tern's SDK bridge. Resolve tab positions from the live ordered snapshot and use the current session instead of numeric mutation selectors; preserve tab order and focus.
+- Retain the host limitation for a focused pane/tab whose own SDK ID cannot round-trip; positional tab selectors do not repair pane lookup, geometry identity, move or equalization APIs.
+- Establish the public GitHub source repository at `yoyooyooo/tern-grid-layout`; retain source-only distribution with no tagged release.
 
 ## 0.5.0
 
