@@ -1,0 +1,6 @@
+schema = 1
+id = "grid-layout"
+name = "Grid Layout"
+version = "0.5.0"
+description = "Arrange panes in responsive equal-width columns with a configurable minimum width."
+window = "window.luau"

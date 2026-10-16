@@ -1,0 +1,33 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm run pack:plugin
+      - name: Verify extracted source bundle
+        run: |
+          archive_dir="$(mktemp -d)"
+          tar -xzf dist/tern-grid-layout-*.tar.gz -C "$archive_dir"
+          cd "$archive_dir"
+          npm ci --ignore-scripts
+          npm run check
