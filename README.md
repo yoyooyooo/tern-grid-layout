@@ -9,7 +9,7 @@ Keep a busy Tern tab readable: arrange its panes into equal-width columns when t
 **Cmd+K → Grid → Grid Layout: Arrange Responsive Panes**  
 Shortcut: **Control + Option + Shift + G**.
 
-Experimental **0.5.0**, verified on **macOS / Tern 0.8.3**. Source is hosted at [yoyooyooo/tern-grid-layout](https://github.com/yoyooyooo/tern-grid-layout); no tagged release is published yet.
+Experimental **0.5.0**, verified on **macOS / Tern 0.8.3**, with compatibility smoke on **0.9.1**. Source is hosted at [yoyooyooo/tern-grid-layout](https://github.com/yoyooyooo/tern-grid-layout); no tagged release is published yet.
 
 ## How it works
 
@@ -25,7 +25,7 @@ You need the Tern desktop app and a working CLI. Run this in a terminal first:
 tern --version
 ```
 
-The verified host is **Tern 0.8.3**. On macOS the plugin calls the CLI inside the standard app location, `/Applications/Tern.app/Contents/MacOS/tern`. For another location, set `executable` in the [configuration reference](./docs/reference.md#configuration). Other platforms and host versions are unverified. Node.js and npm are not needed to run the plugin.
+Native acceptance was recorded on **Tern 0.8.3**; current compatibility smoke uses **Tern 0.9.1 (a309fbb)**. On macOS the plugin calls the CLI inside the standard app location, `/Applications/Tern.app/Contents/MacOS/tern`. For another location, set `executable` in the [configuration reference](./docs/reference.md#configuration). Other platforms are unverified. Node.js and npm are not needed to run the plugin.
 
 Obtain the source directory or extract a source archive, then open a terminal **in that directory** (it contains `plugin.toml`). Run:
 
@@ -71,11 +71,11 @@ Remove a copied installation with `tern plugin remove grid-layout`. For a linked
 
 ## Limits and trust
 
-This plugin uses Tern's developer control interface, which can change across host versions. Geometry queries can start up to two short-lived CLI processes per observation, even in single-pane or zoomed tabs. Multi-window routing may require an explicit control endpoint. Errors during automatic queries are quiet; run the command to inspect failures. See [operation and troubleshooting](./docs/reference.md#operation-and-troubleshooting).
+This plugin uses Tern's developer control interface, which can change across host versions. Each observation starts up to three short-lived CLI processes, even in single-pane or zoomed tabs. Arrangement adds a fresh topology query and sequential native pane moves. Multi-window routing may require an explicit control endpoint. Errors during automatic queries are quiet; run the command to inspect failures. See [operation and troubleshooting](./docs/reference.md#operation-and-troubleshooting).
 
-Tern 0.8.3–0.8.4 has a large native-ID bridge limitation. Arrangement uses live tab positions to avoid an unrelated tab causing `unknown tab`; a focused pane/tab whose own ID cannot round-trip remains unsupported. See [troubleshooting](./docs/reference.md#operation-and-troubleshooting).
+Tern's SDK large-ID bridge limitation persists in 0.9.1. This source reads full native IDs and split trees through the CLI, moves panes using decimal string IDs, and equalizes through the current window action. It avoids numeric SDK lookup and mutation selectors. See [troubleshooting](./docs/reference.md#operation-and-troubleshooting).
 
-The plugin reads its config, selected Tern environment variables and window/pane geometry, and runs the configured CLI. It sends no network requests or telemetry and stores no pane contents or diagnostic logs. Treat the configured executable and control endpoint as trusted local authority. Details and the current reporting limitation are in [SECURITY.md](./SECURITY.md).
+The plugin reads its config, selected Tern environment variables, session/tab/pane metadata and window geometry, and runs the configured CLI. It sends no network requests or telemetry and stores no pane contents or diagnostic logs. Treat the configured executable and control endpoint as trusted local authority. Details and the current reporting limitation are in [SECURITY.md](./SECURITY.md).
 
 ## Contributing
 

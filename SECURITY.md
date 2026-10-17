@@ -2,9 +2,9 @@
 
 ## Scope
 
-This is an experimental local Tern plugin. Only the current 0.5.x line is considered for fixes, on the verified macOS / Tern 0.8.3 combination. There is no response-time or long-term support commitment.
+This is an experimental local Tern plugin. Only the current 0.5.x line is considered for fixes, on macOS with native acceptance recorded on Tern 0.8.3 and compatibility smoke on 0.9.1. There is no response-time or long-term support commitment.
 
-The plugin executes the configured Tern CLI, reads its config and selected Tern environment variables, inspects window geometry through the local developer control endpoint, and rearranges panes. It does not send network requests, telemetry or pane contents. Tern itself is outside this plugin's security boundary.
+The plugin executes the configured Tern CLI, reads its config and selected Tern environment variables, inspects session/tab/pane metadata and window geometry through local daemon/control endpoints, and rearranges panes. It does not send network requests, telemetry or pane contents. Tern itself is outside this plugin's security boundary.
 
 Only install source you trust. Treat plugin files, `config.json` (especially `executable`), daemon sockets and control endpoints as local executable authority. Do not expose control endpoints to untrusted users. Subprocess environment inheritance is controlled by Tern; this plugin forwards selected routing variables explicitly but does not promise an empty environment. CLI errors may contain local paths in manual error toasts; redact them before sharing.
 

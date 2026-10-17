@@ -4,7 +4,7 @@ This repository is a source-distributed Tern plugin. Keep runtime dependencies a
 
 ## Local checks
 
-Requires Node.js 22+, npm, and macOS with Tern 0.8.3 for native verification.
+Requires Node.js 22+, npm, and macOS with Tern for native verification. Full historical acceptance used 0.8.3; current compatibility smoke uses 0.9.1.
 
 ```sh
 npm ci
@@ -33,6 +33,7 @@ Check all of these on the real window:
 - Focus and other tabs survive arrangement; programs remain running.
 - Zoomed and single-pane tabs do not automatically arrange.
 - A wrong control endpoint or focus/tree changes during a query cancel the operation.
+- A focused pane whose native ID exceeds 44 bits still arranges; record its native CLI ID and truncated SDK ID. Other tabs and their split trees remain unchanged.
 
 Quit the disposable window after checking. Do not include screenshots with session content, local config, sockets or logs in commits.
 

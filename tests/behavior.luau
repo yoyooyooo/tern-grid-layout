@@ -1,8 +1,7 @@
 local function fixture()
-    local f = {time = 0, timers = {}, queries = {}, arrangements = 0, errors = {}, width = 2100, height = 1000, stage = 2000, focus = 3}
-    local root = {split = "right", ratio = 0.7, {pane = 1}, {split = "right", ratio = 0.4, {pane = 2}, {pane = 3}}}
-    f.layout = {root = root}
-    f.tabs = {{id = 10, session = 1, position = 1}, {id = 20, session = 1, position = 2}}
+    local f = {time = 0, timers = {}, queries = {}, moves = {}, arrangements = 0, errors = {}, width = 2100, height = 1000, stage = 2000, focus = 3}
+    f.layout = {root = {Split = {axis = "Row", ratio = 0.7, a = {Leaf = 1}, b = {Split = {axis = "Row", ratio = 0.4, a = {Leaf = 2}, b = {Leaf = 3}}}}}}
+    f.tab = 10
     local api = {
         runtime = {os = "macos"}, plugin = {data = "/plugin-data/grid-layout"},
         getenv = function(name) return name == "HOME" and "/sandbox" or nil end,
@@ -12,6 +11,11 @@ local function fixture()
             encode = function(value) return value end,
             decode = function(value)
                 if value == "config" then return f.config end
+                if value == "tabs" then
+                    return {sessions = {{shown = true, tabs = {{id = f.tab, shown = true,
+                        zoomed = f.layout.zoomed or false, splits = f.layout.root,
+                        blocks = {{id = f.native_focus or f.focus, focused = true}}}}}}}
+                end
                 if value == "state" then return {ok = true, focused = {id = f.remote_focus or f.focus}} end
                 if value == "geometry" then return {ok = true, header = {viewport = {width = f.width, height = f.height}}, elements = {{visible = true, rect = {0, 0, f.stage, 900}}}} end
                 error("Invalid JSON")
@@ -21,35 +25,15 @@ local function fixture()
     local cx = {
         session = {
             focused = function() return f.focus end,
-            tab_of = function() return 10 end,
-            layout = function() return f.layout end,
-            tabs = function() return f.tabs end,
-        },
-        layout = {
-            arrange = function(_, spec)
-                local session = spec.session or 1
-                if session ~= 1 then return nil, "unknown session " .. session end
-                local resolved = {}
-                for _, group in ipairs(spec.tabs) do
-                    local found
-                    for _, tab in ipairs(f.tabs) do
-                        if tab.session == session and (group.tab == (tab.native_id or tab.id)
-                            or group.tab == tostring(tab.position)) then
-                            found = tab.id
-                            break
-                        end
-                    end
-                    if not found then return nil, "unknown tab " .. group.tab .. " in session " .. session end
-                    table.insert(resolved, found)
-                end
-                f.arranged_tabs = resolved
-                f.arrangements += 1
-                return {}
+            pane = function(_, spec)
+                return {focused = spec == tostring(f.native_focus or f.focus), floating = false, parked = false}
             end,
-            move = function() return true end,
-            even = function() end,
         },
         toast = function(_, _, _, message) table.insert(f.errors, message) end,
+        command = function(_, id)
+            assert(id == "equalize")
+            f.arrangements += 1
+        end,
     }
     api.command = function(command) f.command = command.run end
     api.timer = function(ms, callback)
@@ -59,13 +43,17 @@ local function fixture()
         return timer
     end
     api.process = {run = function(argv, _, callback)
-        table.insert(f.queries, {kind = argv[#argv] == "state" and "state" or "geometry", callback = callback})
+        local kind = argv[2] == "ls" and "tabs" or argv[#argv] == "state" and "state"
+            or argv[#argv] == ".tn-stage" and "geometry" or "operation"
+        table.insert(f.queries, {kind = kind, argv = table.clone(argv), callback = callback})
     end}
+    function f:step()
+        local query = table.remove(self.queries, 1)
+        if query.kind == "operation" then table.insert(self.moves, query.argv) end
+        query.callback({status = self.query_status or 0, stdout = self.invalid_json and "invalid" or query.kind, stderr = "query failed"}, cx)
+    end
     function f:flush()
-        while #self.queries > 0 do
-            local query = table.remove(self.queries, 1)
-            query.callback({status = self.query_status or 0, stdout = self.invalid_json and "invalid" or query.kind, stderr = "query failed"}, cx)
-        end
+        while #self.queries > 0 do self:step() end
     end
     function f:observe()
         self.time += 500
@@ -82,6 +70,7 @@ local function fixture()
     function f:manual() self.command(cx); self:flush() end
     load_plugin(api)
     function f:start_manual() self.command(cx) end
+    function f:start_observation() self.timers[1].callback(cx) end
     return f
 end
 
@@ -95,7 +84,7 @@ end
 test("baseline and divider/pane edits do not arrange", function()
     local f = fixture()
     f:observe()
-    f.layout.root = {split = "down", ratio = 0.2, {pane = 1}, {pane = 3}}
+    f.layout.root = {Split = {axis = "Column", ratio = 0.2, a = {Leaf = 1}, b = {Leaf = 3}}}
     f:observe(); f:observe()
     assert(f.arrangements == 0)
 end)
@@ -135,7 +124,7 @@ test("zoomed resize does not arrange on unzoom", function()
 end)
 
 test("single pane resize only records baseline", function()
-    local f = fixture(); f.layout.root = {pane = 3}; f:observe()
+    local f = fixture(); f.layout.root = {Leaf = 3}; f:observe()
     f.width = 1700; f:observe(); f:manual()
     assert(f.arrangements == 0)
 end)
@@ -166,18 +155,32 @@ test("malformed response cannot arrange", function()
     assert(f.arrangements == 0 and #f.errors == 1)
 end)
 
-test("a background tab with a truncated SDK ID does not block the focused layout", function()
+test("focused high native IDs arrange despite truncated SDK IDs", function()
     local f = fixture()
-    -- Exact pair observed in the reported session; the target itself has an addressable ID.
-    f.tabs = {
-        {id = 11029476016218, native_id = 186951336460378, session = 1, position = 1},
-        {id = 99, session = 2, position = 1},
-        {id = 10, session = 1, position = 2},
-        {id = 20, session = 1, position = 3},
-    }
+    f.focus = 10642928959495
+    f.native_focus = 432855394025479
+    f.remote_focus = f.native_focus
+    f.tab = 419755743772679
+    f.layout.root = {Split = {axis = "Row", ratio = 0.3, a = {Leaf = 428036440719387}, b = {Leaf = f.native_focus}}}
+    f.stage = 1000
     f:manual()
     assert(f.arrangements == 1 and #f.errors == 0)
-    assert(f.arranged_tabs[1] == 11029476016218 and f.arranged_tabs[2] == 10 and f.arranged_tabs[3] == 20)
+    assert(f.moves[1][3] == "432855394025479" and f.moves[1][5] == "428036440719387")
+    assert(f.moves[2][4] == "below")
+end)
+
+test("tree changes during geometry queries cancel mutation", function()
+    local f = fixture(); f:start_manual(); f:step()
+    f.layout.root = {Leaf = 3}
+    f:flush()
+    assert(f.arrangements == 0 and #f.moves == 0)
+end)
+
+test("manual command queued during an observation still arranges", function()
+    local f = fixture()
+    f:start_observation()
+    f:start_manual(); f:flush()
+    assert(f.arrangements == 1)
 end)
 
 return cases

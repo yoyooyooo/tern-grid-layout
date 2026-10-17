@@ -10,7 +10,8 @@ Versions below describe local plugin iterations. They do not imply hosted releas
 - Rename the command palette entry to English: `Grid Layout: Arrange Responsive Panes`. The command ID and shortcut are unchanged.
 - Align English and Chinese READMEs around installation and first use, add section navigation, and move complete configuration, layout rules and troubleshooting into bilingual references included in the source archive.
 - Fix session-wide arrangement failing with `unknown tab` when an unrelated tab's native ID is truncated by Tern's SDK bridge. Resolve tab positions from the live ordered snapshot and use the current session instead of numeric mutation selectors; preserve tab order and focus.
-- Retain the host limitation for a focused pane/tab whose own SDK ID cannot round-trip; positional tab selectors do not repair pane lookup, geometry identity, move or equalization APIs.
+- Fix focused high-ID panes silently failing on Tern 0.9.1: read native topology through `tern ls --json`, move panes with full decimal string IDs via the native CLI, and equalize through the current window action. Recheck focus/tree before moving; preserve tabs and programs without numeric SDK selectors.
+- Retain manual commands issued while an automatic query is pending, and prefer the configured daemon socket over an inherited pane socket.
 - Establish the public GitHub source repository at `yoyooyooo/tern-grid-layout`; retain source-only distribution with no tagged release.
 
 ## 0.5.0
