@@ -35,11 +35,11 @@ max(1, min(pane_count, floor(available_stage_width / min_width)))
 
 Available width excludes the sidebar. Panes are collected in split-tree traversal order, with extra panes assigned to the leftmost columns. Columns have equal widths and panes within each column have equal heights. A window narrower than `min_width` still uses one column: the threshold is not a strict minimum pane size. No minimum-height limit or overflow-to-new-tab behavior is provided.
 
-The first automatic observation establishes a baseline. A change to the window viewport's width or height requests arrangement of the focused tab. Single-pane and zoomed tabs only update the automatic baseline, so leaving zoom alone does not replay a resize. Split-tree edits, pane creation/removal, tab changes, sidebar changes and config edits do not themselves request arrangement. The explicit command arranges immediately when geometry is available.
+The first automatic observation establishes a baseline. A change to the window viewport's width or height requests arrangement of the focused tab. Single-pane and zoomed tabs only update the automatic baseline, so leaving zoom alone does not replay a resize. Split-tree edits, pane creation/removal, tab changes, sidebar changes and config edits do not themselves request arrangement. The explicit command arranges when geometry is available; a command issued during an existing query is retained until that operation finishes.
 
 ### Multiple windows
 
-The plugin queries `tern ctl state` and `dump .tn-stage`. It forwards selected Tern routing variables and on macOS can derive the pane daemon socket from the config directory. It rejects a state query whose focused pane does not match and cancels if focus or the split tree changes during the query.
+The plugin queries `tern ls --json`, `tern ctl state` and `dump .tn-stage`. Native CLI JSON preserves full pane/tab IDs that the SDK can truncate. It forwards selected Tern routing variables, preferring the explicit daemon socket over an inherited pane socket and otherwise deriving the macOS socket from the config directory. It checks focus using a lossless string pane selector, rejects a geometry query whose native focused pane differs, and rechecks the native tab/tree immediately before moving panes. Focus changes cancel the remaining moves.
 
 If the explicit command reports that geometry reached a different window, launch the intended window with `tern --control <endpoint>`, where `<endpoint>` is a local control endpoint you choose, and set `control` to that same endpoint. Keep `min_width` in the config. Do not expose endpoints to untrusted users. Automatic discovery of per-window endpoints is not provided; multiple windows sharing one config but using different endpoints need deliberate routing. A shared `control` value should not be assumed to target each window independently.
 
@@ -59,7 +59,7 @@ Plugin configuration is stored separately from the source checkout. Uninstall/co
 
 ## Operation and troubleshooting
 
-The plugin observes every 500 ms, with up to two short-lived CLI processes per observation, including single-pane and zoomed tabs. Each CLI call has a 3-second timeout. A size change must remain stable for at least 200 ms before arranging; polling and query time add to the delay. The observation rate is not a guaranteed end-to-end latency.
+The plugin observes every 500 ms, with up to three short-lived CLI processes per observation, including single-pane and zoomed tabs. Arrangement adds a topology recheck and sequential `tern move` calls, then runs the current window's `equalize` action. Each CLI call has a 3-second timeout. A size change must remain stable for at least 200 ms before arranging; polling, queries and pane moves add to the delay. Moves are sequential rather than atomic: a failure or focus change can leave a partially arranged tab. Run the command again after resolving the failure. The observation rate is not a guaranteed end-to-end latency.
 
 | Symptom | Check |
 | --- | --- |
@@ -67,8 +67,7 @@ The plugin observes every 500 ms, with up to two short-lived CLI processes per o
 | Automatic layout appears inactive | Run the explicit command to see an error. Check config validity, CLI path and control routing. Loading or splitting alone should not arrange. |
 | Fewer columns than expected | Compare the available tab width, excluding sidebar space, with `min_width`. Run the command after editing config. |
 | Custom proportions changed | Window width or height changes intentionally restore an even layout. The plugin has no undo. |
-| `unknown tab … in session …` | Tern's SDK ID bridge can truncate large native IDs. This source uses live string positions for all arrangement tabs, so an unrelated high-ID tab no longer blocks the focused layout. Reload an updated linked checkout, or reinstall an updated copy. |
-| Current high-ID pane does not arrange, or reports a different window | The focused pane/tab can itself fail SDK lookup or differ from the CLI's native ID. This host limitation remains; the positional tab fix does not repair pane lookup/move/equalization. Do not mask IDs or restart the daemon as a workaround. |
-| Host upgrade breaks queries | Full acceptance was recorded on Tern 0.8.3; 0.8.4 has bounded ID-selector and terminal-layout smoke only. The developer control format may change. Retain a known-good source archive. |
+| `unknown tab … in session …`, or a high-ID pane silently does nothing | Tern's SDK bridge still truncates large IDs in 0.9.1. Update and reload this source: topology queries and pane moves use full native IDs through the CLI, and equalization uses the current window action. No daemon restart or ID masking is needed. |
+| Host upgrade breaks queries | Full acceptance was recorded on Tern 0.8.3; current compatibility smoke covers 0.9.1, including a focused high-ID pane, manual arrangement and window resizing. The developer control format may change. Retain a known-good source archive. |
 
-The plugin reads config, selected Tern environment variables and geometry, then rearranges existing panes without restarting their programs. It does not make network requests, send telemetry or store pane content/logs. Error toasts can contain local paths from CLI stderr; redact them before sharing. See [SECURITY.md](../SECURITY.md) for executable/control authority and current reporting limits, and [readiness evidence](./readiness.md) for what was exercised.
+The plugin reads config, selected Tern environment variables, session/tab/pane metadata and geometry, then rearranges existing panes without restarting their programs. It does not make network requests, send telemetry or store pane content/logs. Error toasts can contain local paths from CLI stderr; redact them before sharing. See [SECURITY.md](../SECURITY.md) for executable/control authority and current reporting limits, and [readiness evidence](./readiness.md) for what was exercised.
